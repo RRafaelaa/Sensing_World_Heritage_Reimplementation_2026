@@ -1,0 +1,85 @@
+{
+  "research_context": {
+    "heritage_values_used": [],
+    "heritage_values_discussed": [],
+    "case_study_locations": [],
+    "geographical_regions": [],
+    "specific_event_or_incident": ""
+  },
+
+  "social_media_data": {
+    "data_modalities_detected": [],
+
+    "dataset_description": {
+      "total_posts": "",
+      "total_users": "",
+      "modality_counts": {
+        "text_posts": "",
+        "images": "",
+        "videos": "",
+        "3d_objects": "",
+        "geotagged_entries": ""
+      },
+      "time_coverage": "",
+      "spatial_coverage": ""
+    }
+  },
+
+  "ai_methodology": {
+    "task_types": [],
+    "model_families": [],
+    "specific_models_mentioned": []
+  },
+
+  "evaluation": {
+    "qualitative_results": {
+      "summary": "",
+      "example_outputs": [],
+      "qualitative_comparisons": []
+    },
+
+    "error_analysis": {
+      "error_summary": "",
+      "error_examples": [],
+      "identified_error_causes": []
+    },
+
+    "ablation_studies": []
+  },
+
+  "findings_and_contributions": {
+    "cultural_patterns_identified": [],
+    "social_media_behavior_insights": [],
+    "heritage_significance_findings": [],
+
+    "perceptual_or_sentiment_insights": [],
+    "community_or_user_group_differences": [],
+
+    "spatial_or_temporal_patterns": [],
+
+    "applications_and_use_cases": [],
+    "implications_for_heritage_management": [],
+
+    "methodological_contributions": [],
+    "empirical_contributions": [],
+    "conceptual_contributions": [],
+
+    "limitations_or_challenges": []
+  },
+
+  "ethics_and_reproducibility": {
+    "privacy_and_data_protection": [],
+    "bias_fairness_and_representativeness": [],
+    "ethical_frameworks_or_guidelines": [],
+    "cultural_and_community_considerations": [],
+    "legal_or_policy_constraints": [],
+    "risks_to_people_or_heritage": [],
+    "copyright_or_licensing_issues": [],
+    "limitations_acknowledged": []
+  },
+
+  "pattern_hits_and_notes": {
+    "extraction_notes": "",
+    "additional_relevant_information": ""
+  }
+}

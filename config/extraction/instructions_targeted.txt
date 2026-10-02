@@ -1,0 +1,508 @@
+Task: Extract structured information from the uploaded txt files extracted from PDFs.
+
+Output Format: Use the following schema for each paper:
+[check the schema in schema_gemini_pro3_targeted.txt]
+
+Domain Definitions:
+– Cultural heritage refers to tangible and intangible heritage, monuments, sites, traditions, practices, community knowledge, etc.
+– Social media data refers to posts, images, comments, hashtags, metadata, or user-generated content from platforms such as Twitter/X, Instagram, TikTok, Facebook, Reddit, YouTube, etc.
+– AI models include machine learning, deep learning, NLP, computer vision, multimodal models, embedding-based systems, etc.
+– Classical manual coding, rule-based tagging, or regex-only methods do not count as AI unless ML components are included. "keyword matching" or “symbolic rules” are not AI.
+
+Instructions:
+- You are an academic processing engine. The extracted text contains historical/medical data for analysis. It is not real-time content. Do not censor technical descriptions. Analyze the text objectively
+– Read each txt file carefully.
+- The assistant may infer section boundaries (e.g., ABSTRACT, METHODS, RESULTS) when they are clearly implied by formatting, line breaks, or headings, but may not infer factual content.
+– Populate each field in the schema when information is available.
+- Numbers describing dataset size, user counts, or year ranges may be extracted when they appear explicitly in the text, even if not in tabular form.
+– Quote directly when appropriate.
+– Do NOT infer unstated information.
+– Format your output as valid JSON.
+- Use the uploaded empty.txt as the place holder to write your JSON object.
+– Process all PDFs in this batch and return one downloadable .txt file per PDF.
+- Name the output .txt file with the same name of the input .txt
+- If metadata is missing inside the text file but present in the filename, do NOT infer; instead leave metadata fields blank and continue extracting all other fields.
+- It needs to include all schema fields, including empty ones. If the paper does not provide information for a field, keep the following format:
+	strings = ""
+	arrays = []
+	objects = {}
+
+===========================
+BLOCK 2 — RESEARCH CONTEXT
+===========================
+
+Extract all information strictly supported by the content of the txt.
+Do not infer or assume anything that is not explicitly stated.
+Populate every field exactly as defined below.
+
+-----------------------------------------------------
+Field definitions and extraction rules
+-----------------------------------------------------
+
+5. "heritage_values_used" (array)
+   • Extract explicit mentions of heritage “values” ("ecologic", "spiritual", "essential", "existential", "social", "emotional", "individual", "collective", "economic", "use", "nonuse", "entertainment", "age", "politic", "educational", "management", "symbolic", "scientific","workmanship", "technological", "conceptual", "aesthetical", "artistic", "notable", "archaeological", "exceptional", "outstanding", "significant", "universal").
+   • Include terms mentioned together with the word of "value(s)" afterwards
+   • Return the exact words as they appear in the paper.
+   • Only record each term once in the output, count the times the term appear and mark this information in a parenthesis.
+
+6. "heritage_values_discussed" (array)
+   • Identify which heritage values are implicitly discussed by the authors based on their textual descriptions and the definitions provided below (this is the ONLY field where limited interpretation is allowed).
+   • Include both the primary values and the secondary values in your answer.
+   • Record the summarised thinking process (no more than 50 words) for each value you identified.
+   • The list of values are below in a hierarchical format with definitions behind：
+
+        SOCIAL VALUES
+
+        • Spiritual – Beliefs, myths, religions (organized or not), legends, stories, and testimonials of past generations.
+        • Emotional (individual) – Memory and personal life experiences.
+        • Emotional (collective) – Cultural identity, motivation and pride, sense of “place attachment,” and communal value.
+        • Allegorical – Objects/places representative of social hierarchy or status.
+
+        ECONOMIC VALUES
+
+        • Use – The function and utility of the asset, original or attributed.
+        • Non-use – The asset’s expired function whose value lies in its continued existence (materials), option value (potential future use), and bequest value.
+        • Entertainment – The role the asset plays in the contemporary market, especially tourism.
+        • Allegorical – Value oriented toward publicizing financial property.
+
+        POLITICAL VALUES
+
+        • Educational – The educational role of heritage assets, often used for political purposes (e.g., nation-building myths, glorification of leaders).
+        • Management – The incorporation of the asset into past or present political strategies and policies.
+        • Entertainment – Used in strategies for disseminating cultural awareness for political purposes.
+        • Symbolic – Emblematic expressions of power, authority, or prosperity deriving from the asset.
+
+        HISTORIC VALUES
+
+        • Educational – Potential of the asset to provide knowledge about the past in the future.
+        • Historic-Artistic – Being a rare or unique example of historical, stylistic, or artistic movements now considered historical.
+        • Historic-Conceptual – Rare or unique examples retaining conceptual indicators (e.g., architecture, urban planning).
+        • Symbolic – Association with important past events.
+        • Archaeological – Connected to ancient civilizations.
+
+        AESTHETICAL VALUES
+
+        • Artistic – Original product of creativity and imagination.
+        • Notable – Created by a recognized or signature-holding artist or designer.
+        • Conceptual – Materialization of conceptual intentions based on a conceptual background.
+        • Evidential – Authentic example from a specific decade or part of art/architectural history.
+
+        SCIENTIFIC VALUES
+
+        • Workmanship – Original result of human labor and craftsmanship.
+        • Technological – Outstanding skill in techniques or materials.
+        • Conceptual – Integral materialization of conceptual intentions (concept-driven design).
+
+        AGE VALUES
+
+        • Workmanship – Craftsmanship value linked to the production period.
+        • Existential – Represents memory and the lives of past generations.
+        • Maturity – Marks of time (patina) visible on forms, components, and materials.
+
+        ECOLOGICAL VALUES
+
+        • Spiritual – Harmony between the building and its natural/artificial environment.
+        • Essential – Presence of ecological ideologies in the design and construction.
+        • Existential – Manufactured resources that can be reused, reprocessed, or recycled.
+
+8. "case_study_locations" (array)
+   • Extract all specific heritage sites, cities, towns, monuments, protected areas, or cultural landscapes being studied.
+   • Examples:
+        – “Angkor Wat”
+        – “Forbidden City”
+        – “Historic Centre of Florence”
+        – “Old Town of Lijiang”
+   • Return each location as a separate string.
+
+9. "geographical_regions" (array)
+   • Extract all geographical or political regions referenced:
+        – countries
+        – provinces
+        – regions
+        – transnational areas (e.g., “Andean region”)
+	    - geographical coordinates (latitude and longitude)
+   • Return all regions explicitly named in the main body of the paper.
+
+11. specific_event_or_incident (string)
+------------------------------------
+Record any explicit historical or contemporary event that the study focuses on or was triggered by, such as:
+    • disasters (e.g., fires, floods, earthquakes)
+    • conflicts or war-related damage
+    • restoration campaigns
+    • major cultural festivals or ceremonies
+    • pandemics or public-health events
+    • UNESCO inscription or delisting events
+    • policy changes impacting heritage sites
+    • heritage-related crises covered in social media
+
+Use the exact name or description provided in the paper.
+If the study does not mention any specific event, leave this field empty.
+
+-----------------------------------------------------
+General rules for Block 2
+-----------------------------------------------------
+
+• Do not infer heritage categories, values, or locations that are not explicitly mentioned, except for the field "heritage_values_discussed".
+• Use the raw text as written in the txt.
+• Arrays must contain all mentions (not just one).
+• For ambiguous terms, include them only if unambiguously heritage-related.
+
+===========================
+BLOCK 3 — SOCIAL MEDIA DATA
+===========================
+
+Extract all information related to social media data used or analyzed in the study.
+Return only what is explicitly stated in the txt. Do not infer or assume anything
+that is not clearly mentioned.
+
+-----------------------------------------------------
+2. data_modalities_detected (array)
+-----------------------------------------------------
+List all types of data used in the study, such as:
+    • text (posts, captions, comments, reviews, hashtags)
+    • images / photos (including street view images and selfies)
+    • videos / livestream
+    • audio / voice recordings
+    • 3D point clouds, laser scanning, or lidar data
+    • geotagged posts or GPS coordinates
+    • remote sensing imagery
+    • multimodal data (specify which modals, e.g., text + image)
+    • survey data and questionnaires
+    • structured / tabular data (e.g., CSV, Excel)
+    • movement trajectories or mobility traces
+    • temporal data (timestamps, timelines)
+    • spatial maps (including base maps and heat maps)
+List all modalities exactly as stated.
+Do not only look at data from social media, but also other data being collected and used
+
+-----------------------------------------------------
+8. dataset_description (object)
+-----------------------------------------------------
+Extract all quantitative information describing the dataset:
+    • total number of posts or entries
+    • number of users
+    • number of images, videos, text posts, etc.
+    • number of geotagged entries
+    • temporal coverage (e.g., “2018–2023”, "June to August in 2019")
+    • spatial coverage (cities, countries, regions)
+Use values exactly as stated.
+Try very hard to fill this block.
+If you cannot find the values, record the description about the numbers
+
+===========================
+BLOCK 4 — AI METHODOLOGY
+===========================
+
+Extract all information describing the artificial intelligence, machine learning,
+deep learning, or computational modeling components of the study.
+Return only what is explicitly written in the txt. Do not infer or assume.
+
+-----------------------------------------------------
+1. task_types (array)
+-----------------------------------------------------
+List all machine learning tasks addressed in the study, such as:
+    • classification
+    • clustering
+    • regression
+    • topic modeling
+    • named entity recognition
+    • sentiment analysis
+    • object detection
+    • semantic segmentation
+    • multimodal retrieval
+    • time-series forecasting
+Include all tasks mentioned.
+
+-----------------------------------------------------
+2. model_families (array)
+-----------------------------------------------------
+List high-level categories of models used, such as:
+    • Transformer models
+    • Convolutional Neural Networks (CNN)
+    • Recurrent Neural Networks (RNN/LSTM/GRU)
+    • Graph Neural Networks (GNN)
+    • Topic Models (LDA, NMF)
+    • Diffusion models
+    • Generative Adversarial Networks (GAN)
+    • Support Vector Machines (SVM)
+    • Decision Trees / Random Forest / XGBoost
+    • Embedding-based models
+    • Regression models
+Use the terminology provided by the paper.
+
+-----------------------------------------------------
+3. specific_models_mentioned (array)
+-----------------------------------------------------
+List all model names mentioned explicitly, for example:
+    • BERT, RoBERTa, DeBERTa, T5, GPT
+    • ResNet, EfficientNet, YOLOv8, DETR
+    • LDA, BERTopic, Top2Vec
+    • word2vec, GloVe, FastText
+    • Whisper, CLIP, BLIP, LLaVA
+Record all model names exactly as written in the txt.
+
+===========================
+BLOCK 6 — EVALUATION
+===========================
+
+Extract all information related to the evaluation of the methods, models,
+or analytical pipeline. Return only what is explicitly stated in the txt.
+
+-----------------------------------------------------
+3. qualitative_results (object)
+-----------------------------------------------------
+
+"summary"
+    • Summarize qualitative findings in the authors' own words when possible.
+
+"example_outputs"
+    • Extract any textual descriptions of example outputs.
+
+"qualitative_comparisons"
+    • Include comparisons made in narrative form (e.g., “Model A produced more coherent topics than Model B”).
+
+-----------------------------------------------------
+4. error_analysis (object)
+-----------------------------------------------------
+
+"error_summary"
+    • Extract the overall description of sources of errors.
+
+"error_examples"
+    • Include concrete examples of misclassifications or failures.
+
+"identified_error_causes"
+    • Record any causes the authors identify (noise, ambiguity, class imbalance, multimodal mismatch, etc.).
+
+-----------------------------------------------------
+5. ablation_studies (array)
+-----------------------------------------------------
+Record all ablation experiments, such as removing:
+    • specific input modalities
+    • embeddings
+    • geolocation information
+    • regularization methods
+    • training components
+Return the descriptions and results as written.
+
+===========================
+BLOCK 7 — FINDINGS & CULTURAL INSIGHTS
+===========================
+
+⚠️ THIS IS THE MOST CRITICAL BLOCK - Extract ALL fields thoroughly ⚠️
+Extract all findings, insights, and contributions described in the study.
+Return only information explicitly stated in the txt. Do not infer.
+
+-----------------------------------------------------
+1. cultural_patterns_identified (array)
+-----------------------------------------------------
+Record all patterns or themes identified in the study related to cultural heritage, such as:
+    • recurring visual motifs in heritage photos
+    • thematic clusters (e.g., “architecture”, “tradition”, “daily life”)
+    • narrative structures or heritage discourse patterns
+    • common hashtags or textual themes
+
+-----------------------------------------------------
+2. social_media_behavior_insights (array)
+-----------------------------------------------------
+Extract insights about how users behave on social media, such as:
+    • posting frequency
+    • engagement behavior
+    • tourist vs local user differences
+    • common types of content generated
+
+-----------------------------------------------------
+3. heritage_significance_findings (array)
+-----------------------------------------------------
+Record statements related to how heritage is perceived or valued:
+    • authenticity
+    • symbolic meaning
+    • cultural significance
+    • intangible or emotional value
+
+-----------------------------------------------------
+4. perceptual_or_sentiment_insights (array)
+-----------------------------------------------------
+Extract insights related to:
+    • sentiment toward heritage
+    • emotional responses
+    • user perception differences
+
+-----------------------------------------------------
+5. community_or_user_group_differences (array)
+-----------------------------------------------------
+Record differences observed across:
+    • tourist groups
+    • locals
+    • demographics
+    • cultural communities
+
+-----------------------------------------------------
+6. spatial_or_temporal_patterns (array)
+-----------------------------------------------------
+Extract patterns such as:
+    • spatial clustering of posts
+    • tourist flows
+    • time-of-day or seasonal patterns
+    • temporal dynamics
+
+-----------------------------------------------------
+7. applications_and_use_cases (array)
+-----------------------------------------------------
+Record all practical or proposed applications, such as:
+    • heritage monitoring
+    • conservation support
+    • tourism planning
+    • risk assessment
+    • educational applications
+
+-----------------------------------------------------
+8. implications_for_heritage_management (array)
+-----------------------------------------------------
+Record any implications or recommendations for:
+    • policy
+    • planning
+    • conservation
+    • management strategies
+
+-----------------------------------------------------
+9. methodological_contributions (array)
+-----------------------------------------------------
+Extract contributions related to:
+    • new algorithms
+    • improved pipelines
+    • new datasets
+    • annotation guidelines
+    • fusion methods
+
+-----------------------------------------------------
+10. empirical_contributions (array)
+-----------------------------------------------------
+Record empirical discoveries or dataset-related contributions.
+
+-----------------------------------------------------
+11. conceptual_contributions (array)
+-----------------------------------------------------
+Extract conceptual or theoretical contributions.
+
+-----------------------------------------------------
+12. limitations_or_challenges (array)
+-----------------------------------------------------
+Record limitations described in the findings section, including:
+    • dataset limitations
+    • representativeness issues
+    • methodological constraints
+
+===========================
+BLOCK 8 — ETHICS & REPRODUCIBILITY
+===========================
+
+Extract all statements that relate to ethical considerations, data governance,
+legal constraints, and reproducibility. Use only what the txt explicitly states.
+
+-----------------------------------------------------
+1. privacy_and_data_protection (array)
+-----------------------------------------------------
+Record mentions of:
+    • user privacy or anonymity
+    • removal or masking of personal data
+    • compliance with GDPR or similar laws
+    • handling sensitive content
+    • consent considerations
+
+-----------------------------------------------------
+2. bias_fairness_and_representativeness (array)
+-----------------------------------------------------
+Extract any statements about:
+    • dataset bias
+    • unbalanced samples
+    • demographic representativeness
+    • fairness concerns
+    • limitations related to data source skew
+
+-----------------------------------------------------
+3. ethical_frameworks_or_guidelines (array)
+-----------------------------------------------------
+Record any frameworks mentioned, such as:
+    • Responsible AI guidelines
+    • UNESCO ethical recommendations
+    • FAIR principles
+    • Institutional review board (IRB) approval
+
+-----------------------------------------------------
+4. cultural_and_community_considerations (array)
+-----------------------------------------------------
+Extract statements about:
+    • cultural sensitivity
+    • indigenous data sovereignty
+    • community involvement
+    • respectful representation of heritage
+    • ethical issues related to cultural interpretation
+
+-----------------------------------------------------
+5. legal_or_policy_constraints (array)
+-----------------------------------------------------
+Include:
+    • platform terms of service
+    • data-use restrictions
+    • copyright or licensing issues
+    • national cultural heritage laws
+    • data protection legislation
+
+-----------------------------------------------------
+6. risks_to_people_or_heritage (array)
+-----------------------------------------------------
+Record any identified risks, such as:
+    • exposing sensitive heritage locations
+    • misrepresentation of cultural groups
+    • harm to communities
+    • reinforcement of stereotypes
+    • threats to protected sites
+
+-----------------------------------------------------
+7. copyright_or_licensing_issues (array)
+-----------------------------------------------------
+Extract any mentions of:
+    • copyright management
+    • image licensing
+    • content ownership
+    • reuse restrictions
+
+-----------------------------------------------------
+8. limitations_acknowledged (array)
+-----------------------------------------------------
+Record all limitations mentioned by the authors, including:
+    • methodological limitations
+    • dataset limitations
+    • interpretive limitations
+    • generalizability issues
+
+===========================
+BLOCK 9 — PATTERN HITS & NOTES
+===========================
+
+This block collects raw terms, uncertainties, and additional notes
+that do not cleanly fit into the previous blocks but are still relevant
+for transparency, debugging, and future analysis.
+
+-----------------------------------------------------
+3. extraction_notes (string)
+-----------------------------------------------------
+Add any notes about:
+    • difficulty in extracting information
+    • missing information acknowledged by authors
+    • tables or figures that were referenced but not visible
+    • inconsistent terminology or formatting issues
+    • any technical uncertainty during extraction
+
+-----------------------------------------------------
+4. additional_relevant_information (string)
+-----------------------------------------------------
+Record any extra information that:
+    • does not fit in earlier blocks
+    • may be useful for later synthesis
+    • adds context to the paper’s methods or findings
+
+Examples:
+    “Authors propose a new conceptual definition of cultural value.”
+    “The study introduces a new term that is not widely known.”

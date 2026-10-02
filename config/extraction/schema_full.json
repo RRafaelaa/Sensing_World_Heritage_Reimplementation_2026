@@ -1,0 +1,215 @@
+{
+  "metadata": {
+    "title": "",
+    "authors": [],
+    "affiliations": [],
+    "year": "",
+    "publication_type": "",
+    "venue_name": "",
+    "publisher": "",
+    "doi": "",
+    "url": "",
+    "language": "",
+    "page_count": "",
+    "pdf_filename": ""
+  },
+
+  "research_context": {
+    "cultural_heritage_domain": [],
+    "heritage_type": [],
+    "cultural_entities_or_themes_analyzed": [],
+    "heritage_terms_detected": [],
+    "heritage_values_used": [],
+    "heritage_values_discussed": [],
+    "heritage_management_actions": [],
+    "case_study_locations": [],
+    "geographical_regions": [],
+    "historical_time_period": "",
+    "specific_event_or_incident": "",
+    "research_problem_statement": "",
+    "research_objectives": ""
+  },
+
+  "social_media_data": {
+    "platforms_detected": [],
+    "data_modalities_detected": [],
+    
+    "geolocation_data_used": [],
+    "spatial_data_characteristics": [],
+    "temporal_data_characteristics": [],
+    
+    "engagement_metrics_detected": [],
+    "metadata_fields_detected": [],
+
+    "dataset_description": {
+      "total_posts": "",
+      "total_users": "",
+      "modality_counts": {
+        "text_posts": "",
+        "images": "",
+        "videos": "",
+        "3d_objects": "",
+        "geotagged_entries": ""
+      },
+      "time_coverage": "",
+      "spatial_coverage": ""
+    },
+
+    "data_collection": {
+      "collection_method": "",
+      "api_or_tool_used": "",
+      "sampling_strategy": "",
+      "data_cleaning_preprocessing": "",
+      "filtering_criteria": ""
+    },
+
+    "annotation_and_labels": {
+      "annotation_method": "",
+      "annotators": "",
+      "label_schema": [],
+      "inter_annotator_agreement": ""
+    }
+  },
+
+  "ai_methodology": {
+    "task_types": [],
+    
+    "model_families": [],
+    "specific_models_mentioned": [],
+    "pretrained_or_finetuned": "",
+    
+    "embeddings_or_representations": [],
+    "feature_extraction_methods": [],
+    
+    "input_features_used": [],
+    "multimodal_fusion_method": "",
+    
+    "training_details": {
+      "train_val_test_split": "",
+      "loss_functions": [],
+      "optimizer": "",
+      "learning_rate": "",
+      "batch_size": "",
+      "epochs": "",
+      "regularization": [],
+      "augmentation_methods": []
+    },
+    
+    "hyperparameters": {},
+    
+    "baseline_models": [],
+    
+    "computational_resources": {
+      "hardware": "",
+      "gpu_models": [],
+      "num_gpus": "",
+      "memory": "",
+      "runtime": ""
+    },
+    
+    "model_architecture_details": "",
+    "training_procedure_summary": ""
+  },
+
+  "graph_or_network_analysis": {
+    "graph_constructed": "",
+    "graph_type": [],
+    
+    "node_definition": "",
+    "edge_definition": "",
+    
+    "number_of_nodes": "",
+    "number_of_edges": "",
+    
+    "graph_properties_reported": [],
+    
+    "graph_construction_method": "",
+    
+    "graph_algorithms_or_models_used": [],
+    "graph_visualization_methods": [],
+    
+    "graph_purpose_in_study": ""
+  },
+
+  "evaluation": {
+    "evaluation_metrics_used": [],
+    
+    "quantitative_results": {
+      "overall_results": [],
+      "per_class_or_category_results": [],
+      "per_model_results": [],
+      "statistical_tests": []
+    },
+
+    "qualitative_results": {
+      "summary": "",
+      "example_outputs": [],
+      "qualitative_comparisons": []
+    },
+
+    "error_analysis": {
+      "error_summary": "",
+      "error_examples": [],
+      "identified_error_causes": []
+    },
+
+    "ablation_studies": [],
+
+    "cross_validation_or_splitting_strategy": "",
+    
+    "benchmark_comparisons": {
+      "baseline_models": [],
+      "proposed_vs_baseline_results": []
+    },
+
+    "visualization_types_used": []
+  },
+
+  "findings_and_contributions": {
+    "cultural_patterns_identified": [],
+    "social_media_behavior_insights": [],
+    "heritage_significance_findings": [],
+    
+    "perceptual_or_sentiment_insights": [],
+    "community_or_user_group_differences": [],
+    
+    "spatial_or_temporal_patterns": [],
+    
+    "applications_and_use_cases": [],
+    "implications_for_heritage_management": [],
+    
+    "methodological_contributions": [],
+    "empirical_contributions": [],
+    "conceptual_contributions": [],
+    
+    "limitations_or_challenges": []
+  },
+
+  "ethics_and_reproducibility": {
+    "privacy_and_data_protection": [],
+    "bias_fairness_and_representativeness": [],
+    "ethical_frameworks_or_guidelines": [],
+    "cultural_and_community_considerations": [],
+    "legal_or_policy_constraints": [],
+    "risks_to_people_or_heritage": [],
+    "copyright_or_licensing_issues": [],
+    "limitations_acknowledged": [],
+    
+    "reproducibility": {
+      "code_availability": "",
+      "data_availability": "",
+      "model_checkpoint_availability": "",
+      "dataset_identifier_or_link": "",
+      "computational_environment": "",
+      "open_source_libraries_used": [],
+      "pipeline_transparency_or_completeness": ""
+    }
+  },
+
+  "pattern_hits_and_notes": {
+    "raw_terms_detected": [],
+    "ambiguous_or_uncertain_cases": [],
+    "extraction_notes": "",
+    "additional_relevant_information": ""
+  }
+}
