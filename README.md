@@ -1,76 +1,54 @@
-# Sensing World Heritage: reimplementation materials
+# Sensing Cultural Significance: reimplementation materials
 
-This release candidate reorganizes the reusable materials behind **“Sensing World Heritage with Social Media and Artificial Intelligence: A Systematic Literature Review.”** It was assembled from the manuscript folder and the two working folders `Extraction_Project` and `bertopic`.
+This repository shares code, configuration, inputs, and selected results for three methods used in *Sensing Cultural Significance with Social Media and Artificial Intelligence: A Systematic Literature Review*: structured extraction from papers, geographic and UNESCO name matching, and BERTopic modelling. It also shares a cross-method binary table that combines extracted terms with topic assignments. See [data/README.md](data/README.md) for the shared data and [analysis/README.md](analysis/README.md) for the analysis notebooks.
 
-The package is intentionally smaller than the working directories. It keeps code, prompts, structured study-level data, derived inputs, and a small set of reference outputs needed to reimplement the computational workflow. It excludes third-party PDFs and extracted full text, model weights, caches, duplicate archives, exploratory backups, failed API responses, IDE files, and author photographs.
+| Method | Code and configuration | Shared data |
+| --- | --- | --- |
+| PDF/TXT to structured extraction | `src/extraction/`, `config/extraction/` | `data/extractions/complete_dataset.xlsx`, `data/extractions/Robustness_alignment_Hassan.xlsx` |
+| Place and UNESCO matching | `src/geography/` | `data/geography/UNESCO_to_Map.xlsx` and the two UNESCO name dictionaries |
+| BERTopic | `src/topic_modeling/` | `data/topic_modeling/meta_data.csv`, `data/topic_modeling/final_probability_distribution.xlsx`, `data/topic_modeling/comparison_report_sorted.csv` |
 
-## What can be reimplemented
+The cross-method result is `data/term_mapping/Binary_encodings.csv`. Its supporting notebooks are in `analysis/`, with their mapping rules in `src/mapping_dictionaries.py`.
 
-1. PDF-to-text conversion with PDFPlumber, PyMuPDF, and OCR fallback.
-2. Schema-constrained Gemini extraction, including a baseline pass and a targeted higher-capability pass.
-3. JSON validation, merge, and conversion to flat study-level tables.
-4. Place extraction, Nominatim geocoding, UNESCO/Tentative List name matching, and paper-level aggregation.
-5. BERTopic modelling using `all-MiniLM-L6-v2`, UMAP, HDBSCAN, c-TF-IDF, KeyBERTInspired, and MMR.
-6. The 192-configuration search reported in the manuscript and its weighted comparison.
-7. Term normalization/binarization and method-theme network analysis through the retained notebooks.
+Article PDFs, extracted full text, API responses, model caches, and generated intermediate files are not distributed. Put papers you may use in `data/pdfs/`. Generated files can be placed under `data/outputs/` or `outputs/`; those directories are ignored by Git.
 
-The PRISMA search, database export, ASReview screening decisions, manual World Heritage corrections, ArcGIS map styling, Gephi layout decisions, and expert topic naming are not fully automated by the available files. They remain documented human or external-tool steps.
+## Install dependencies
 
-## Repository layout
-
-```text
-config/extraction/        schemas and extraction instructions
-src/extraction/           PDF conversion and LLM extraction pipeline
-src/geography/            place/geocoding/UNESCO matching pipeline
-src/topic_modeling/       BERTopic run, grid search, ranking, visualization
-src/utilities/            release-hygiene utilities
-analysis/notebooks/       stripped notebooks for term and network analysis
-data/                     selected study-level and derived research data
-reference_outputs/        compact expected outputs for cross-checking
-```
-
-See `MANIFEST.md` for provenance and `OPEN_SOURCE_REVIEW.md` before publishing.
-
-## Environment
-
-Python 3.10 or 3.11 is recommended. Create separate environments if dependency resolution becomes difficult.
+Create a Python environment and install the packages for the part you want to run:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install --upgrade pip
-pip install -r requirements-extraction.txt
-pip install -r requirements-analysis.txt
+python -m pip install -r requirements-extraction.txt
 ```
 
-OCR additionally requires system installations of Tesseract and Poppler. The SentenceTransformer model downloads from Hugging Face by default; pass `--model_path /path/to/all-MiniLM-L6-v2` for offline use.
+`requirements-extraction.txt` covers PDF extraction, Gemini, table conversion, and geocoding. For BERTopic and the analysis notebooks, use a separate environment if needed and install `requirements-topic-modeling.txt`. OCR also needs system installations of Tesseract and Poppler. The requirements specify minimum versions, not a locked copy of the historical environment.
 
-## 1. PDF to structured extraction
+## 1. PDF/TXT to structured extraction
 
-The papers themselves are not redistributed. Place lawfully obtained PDFs in `data/pdfs/`; this path is ignored by Git.
+Run the commands below from the repository root. `extract_pdf_text.py` reads `data/pdfs/` and writes `data/texts/`; `pdf_to_text.py` supplies its OCR helper.
 
 ```bash
 python src/extraction/extract_pdf_text.py
 ```
 
-This writes plain text to `data/texts/`. Run a small API test first:
+Set `GOOGLE_API_KEY` in your environment. The full and targeted instruction/schema files are predefined extraction rules; they are inputs to the Gemini requests, not outputs generated from each paper. Run the baseline pass and then the targeted pass:
 
 ```bash
-export GOOGLE_API_KEY='your-key'
 python src/extraction/heritage_extractor_gemini.py \
   --input data/texts \
   --output data/outputs/gemini_flash \
   --schema config/extraction/schema_full.json \
   --instructions config/extraction/instructions_full.txt \
-  --model gemini-2.0-flash-exp \
-  --max-papers 5
-```
+  --model gemini-2.0-flash-exp
 
-For the targeted second pass, use `schema_targeted.json`, `instructions_targeted.txt`, and the historically reported `gemini-2.5-pro` model. Model IDs and the legacy `google-generativeai` SDK may no longer be available; substituting a current model is a reimplementation, not an exact replication.
+python src/extraction/heritage_extractor_gemini.py \
+  --input data/texts \
+  --output data/outputs/gemini_targeted \
+  --schema config/extraction/schema_targeted.json \
+  --instructions config/extraction/instructions_targeted.txt \
+  --model gemini-2.5-pro
 
-Merge passes and flatten results:
-
-```bash
 python src/extraction/merge_extractions.py \
   --flash data/outputs/gemini_flash \
   --gemini data/outputs/gemini_targeted \
@@ -82,20 +60,13 @@ python src/extraction/json_to_csv.py \
   --output outputs/extracted_tables
 ```
 
-The two supplied reviewer workbooks are not redistributed because they contain
-local attachment paths. Their 32 cell-level differences are preserved in
-`data/extractions/manual_corrections.csv`. To regenerate that change set from
-authorized copies:
+The merger writes one nested JSON `.txt` file per paper. The converter writes flat CSVs and `master_dataset.xlsx`. The shared `complete_dataset.xlsx` is the published study-level extraction dataset; `Robustness_alignment_Hassan.xlsx` documents the Appendix C consistency check between two records of the same study. These published workbooks are not direct, unmodified outputs of the commands above. Historical model IDs or API behaviour may require adaptation for a fresh run.
 
-```bash
-python src/extraction/export_manual_corrections.py \
-  before_review.xlsx after_review.xlsx \
-  data/extractions/manual_corrections.csv
-```
+## 2. Place and UNESCO matching
 
-## 2. Place and UNESCO mapping
+The place extractor reads the **merged per-paper JSON files** from step 1. It does not read `complete_dataset.xlsx` directly. To start from the published Excel workbook alone, its `merged` sheet would first need conversion to the nested location fields expected by `place_extractor.py`.
 
-The scripts preserve the original sequence and write several files to the current directory. Running them from a dedicated output directory keeps generated files contained.
+The following commands keep generated geography files together:
 
 ```bash
 mkdir -p outputs/geography
@@ -118,19 +89,13 @@ python ../../src/geography/paper_unesco_aggregator.py \
   papers_unesco_status.csv
 ```
 
-Nominatim usage must comply with its current usage policy. The dictionaries in `data/geography/` are snapshots; record the official UNESCO source date when refreshing them.
+`reverse_geocoder.py` can identify a place from coordinates already present in an extraction. `offline_consolidator.py` can consolidate geocoded places by paper; neither is needed to run the name-matching commands above. Geocoding uses Nominatim, so responses can change over time. UNESCO and Tentative List matching uses the name-dictionary snapshots in `data/geography/` and produces candidate matches.
 
-## 3. BERTopic final configuration
+The automatic paper-level output is `papers_unesco_status.csv`. The shared `UNESCO_to_Map.xlsx` adds selections and `City_Country_Pairs` from author-affiliation locations; the current scripts do not reconstruct that final workbook. It contains UNESCO site **names**, not a table of official UNESCO site coordinates. Coordinates in `places_complete.csv` refer to geocoded place names extracted from papers.
 
-The paper’s final configuration is:
+## 3. BERTopic
 
-- `all-MiniLM-L6-v2` embeddings;
-- UMAP `n_neighbors=10`, `n_components=8`, `min_dist=0.1`, cosine metric;
-- HDBSCAN `min_cluster_size=10`, `min_samples=5`, `cluster_selection_method=eom`;
-- c-TF-IDF over 1–3 grams;
-- KeyBERTInspired followed by MMR (`diversity=0.3`);
-- `nr_topics=auto`;
-- outlier reduction with the distributions strategy and threshold `0.1`.
+`data/topic_modeling/meta_data.csv` is the supplied bibliographic input. The model joins title, abstract, and keywords for each record. In the commands below, `--data_file topic_modeling/meta_data.csv` is resolved relative to `data/` by the script.
 
 ```bash
 python src/topic_modeling/bertopic_cluster.py \
@@ -147,24 +112,14 @@ python src/topic_modeling/bertopic_cluster.py \
   --outlier_threshold 0.1
 ```
 
-The historical reference reports 464 documents, nine topics plus an outlier set, coherence C_V `0.6736`, outlier ratio `0.1509`, and silhouette `0.1061`. Stochastic libraries, package versions, model revisions, and hardware can change exact results.
-
-Use the printed experiment ID to generate the visualizations:
+The model uses `all-MiniLM-L6-v2` embeddings by default. To explore the reported 192 parameter combinations, run `python src/topic_modeling/run_grid_search.py`; it calls `compare_experiments.py` to rank the runs. To produce detailed visualizations and a probability workbook for one run, use its printed experiment ID:
 
 ```bash
 python src/topic_modeling/visualize_experiment.py --experiment_id EXPERIMENT_ID
 ```
 
-## 4. Full 192-configuration search
+That visualization script writes `probability_distribution.xlsx` under `outputs/figures_improved_v3/EXPERIMENT_ID/`. The shared `final_probability_distribution.xlsx` is the selected historical result. The shared `comparison_report_sorted.csv` ranks the 192 parameter configurations from the historical comparison run; it is not the result of the separate ten-random-seed stability check. Exact values may differ in a new run because model versions, embeddings, and stochastic steps can differ.
 
-```bash
-python src/topic_modeling/run_grid_search.py
-```
+## Cross-method binary encodings
 
-The grid varies `n_neighbors` (10/15/20/25), `n_components` (5/8/10), `min_dist` (0.0/0.1), `min_samples` (3/5), HDBSCAN selection (`eom`/`leaf`), and outlier reduction (off/on): `4 × 3 × 2 × 2 × 2 × 2 = 192` runs. Fixed settings are `min_cluster_size=10` and `nr_topics=auto`.
-
-The ranking script min-max normalizes available metrics and uses the manuscript weights: coherence C_V 0.25, silhouette 0.20, topic diversity 0.15, outlier ratio 0.15, Davies–Bouldin 0.10, low-confidence ratio 0.10, and topic-size imbalance 0.05. The top five are a shortlist; the final selection still requires expert inspection.
-
-## Verification boundary
-
-This package has been statically checked for syntax, relative paths, data counts, and alignment of the retained reference metrics. The full LLM extraction, 192 BERTopic runs, online geocoding, ArcGIS map, and Gephi layout were not re-executed during packaging.
+`data/term_mapping/Binary_encodings.csv` is the shared paper-level table of extracted-term indicators and binary topic assignments. The original notebooks in `analysis/` show how terms were mapped and combined with BERTopic assignments. They expect intermediate CSV files that are not distributed; [analysis/README.md](analysis/README.md) identifies the corresponding published workbook sheets and explains the original notebooks' run-time settings. Running the saved notebook cells without those preparations does not directly reconstruct the shared binary table.

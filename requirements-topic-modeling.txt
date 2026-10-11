@@ -11,5 +11,7 @@ openpyxl>=3.1
 gensim>=4.3
 nltk>=3.8
 datamapplot>=0.4
+seaborn>=0.12
+plotly>=5
+inflect>=7
 jupyterlab>=4
-

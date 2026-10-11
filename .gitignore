@@ -1,0 +1,20 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Locally supplied papers and generated results
+data/pdfs/
+data/texts/
+data/outputs/
+outputs/
+models/
+
+# Inputs regenerated from the shared workbooks for the analysis notebooks
+data/term_mapping/Gemini_2_flash_all/
+data/term_mapping/Gemini_2_5_pro/
+data/topic_modeling/probability_distribution.csv
