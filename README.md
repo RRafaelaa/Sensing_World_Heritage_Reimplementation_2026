@@ -34,7 +34,7 @@ python src/extraction/extract_pdf_text.py
 
 Set `GOOGLE_API_KEY` in your environment. The full and targeted instruction/schema files are predefined extraction rules; they are inputs to the Gemini requests, not outputs generated from each paper.
 
-For each paper, `src/extraction/heritage_extractor_gemini.py` assembles the prompt sent to Gemini by combining the extracted paper text, its filename, the selected schema and instructions, and a fixed request template in the script.
+For each paper, `src/extraction/heritage_extractor_gemini.py` assembles the prompt sent to Gemini by filling `config/extraction/prompt_template.txt` with the paper filename, extracted plain text, and the selected instructions and JSON schema. Both extraction passes use the same template.
 
 Run the baseline pass and then the targeted pass:
 

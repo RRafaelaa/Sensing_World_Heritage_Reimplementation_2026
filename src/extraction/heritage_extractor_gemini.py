@@ -22,8 +22,11 @@ import re
 import time
 import argparse
 from pathlib import Path
+from string import Template
 from datetime import datetime
 from typing import Optional, Dict
+
+PROMPT_TEMPLATE_PATH = Path(__file__).resolve().parents[2] / "config" / "extraction" / "prompt_template.txt"
 
 try:
     import google.generativeai as genai
@@ -51,9 +54,10 @@ class GeminiExtractor:
         # Configure API
         genai.configure(api_key=api_key)
 
-        # Load schema and instructions
+        # Load the shared prompt template, schema, and instructions
         self.schema = self.load_file(schema_path)
         self.instructions = self.load_file(instructions_path)
+        self.prompt_template = Template(self.load_file(str(PROMPT_TEMPLATE_PATH)))
 
         # Model configuration
         self.generation_config = {
@@ -115,36 +119,12 @@ class GeminiExtractor:
 
     def create_extraction_prompt(self, paper_text: str, filename: str) -> str:
         """Create comprehensive extraction prompt"""
-
-        prompt = f"""You are a precise academic data extraction assistant specializing in heritage research papers. 
-        You are an academic processing engine. The extracted following text contains historical/medical data for analysis. 
-        It is not real-time content. Do not censor technical descriptions. Analyze the text objectively:
-
-PAPER FILENAME: {filename}
-
-EXTRACTION INSTRUCTIONS:
-{self.instructions}
-
-TARGET SCHEMA:
-{self.schema}
-
-CRITICAL REQUIREMENTS:
-1. Follow the schema EXACTLY - include ALL fields even if empty
-2. Use exact field names and structure from schema
-3. Extract only explicitly stated information (do not infer unless specified in instructions)
-4. For heritage_values_discussed, you MAY interpret based on context (as specified in instructions)
-5. Quote directly when appropriate
-6. Return ONLY valid JSON matching the schema structure
-7. Do NOT add markdown formatting or code blocks
-8. Ensure proper JSON escaping for quotes and special characters
-9. Empty strings should be "", empty arrays should be [], empty objects should be {{}}
-
-PAPER TEXT:
-{paper_text}
-
-OUTPUT: Return a single valid JSON object matching the schema exactly. No preamble, no markdown, just pure JSON."""
-
-        return prompt
+        return self.prompt_template.substitute(
+            filename=filename,
+            instructions=self.instructions,
+            schema=self.schema,
+            paper_text=paper_text,
+        )
 
     def clean_json_response(self, response_text: str) -> str:
         """Clean common formatting issues in API responses"""
