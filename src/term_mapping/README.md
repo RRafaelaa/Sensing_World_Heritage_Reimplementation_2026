@@ -4,7 +4,7 @@ The two notebooks in this directory document how extracted terms and BERTopic as
 
 | Notebook | Purpose | Inputs expected by the saved cells |
 | --- | --- | --- |
-| `term_mapping.ipynb` | Normalize extracted terms with `term_mapping/mapping_dictionaries.py`, count them, and create binary indicators for frequent terms. | Two `complete_dataset.csv` files listed below, plus `data/topic_modeling/meta_data.csv`. |
+| `term_mapping.ipynb` | Normalize extracted terms with `src/term_mapping/mapping_dictionaries.py`, count them, and create binary indicators for frequent terms. | Two `complete_dataset.csv` files listed below, plus `data/topic_modeling/meta_data.csv`. |
 | `method_theme_network.ipynb` | Combine those indicators with topic assignments and explore their relationships. | The two `dataset_with_binary_columns.csv` files produced by the first notebook, `data/topic_modeling/probability_distribution.csv`, and `data/topic_modeling/meta_data.csv`. |
 
 ## Prepare local inputs

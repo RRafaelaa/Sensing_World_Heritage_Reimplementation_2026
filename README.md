@@ -1,6 +1,6 @@
 # Sensing Cultural Significance: reimplementation materials
 
-This repository shares code, configuration, inputs, and selected results for three methods used in *Sensing Cultural Significance with Social Media and Artificial Intelligence: A Systematic Literature Review*: structured extraction from papers, geographic and UNESCO name matching, and BERTopic modelling. It also shares a cross-method binary table that combines extracted terms with topic assignments. See [data/README.md](data/README.md) for the shared data and [term_mapping/README.md](term_mapping/README.md) for the analysis notebooks.
+This repository shares code, configuration, inputs, and selected results for three methods used in *Sensing Cultural Significance with Social Media and Artificial Intelligence: A Systematic Literature Review*: structured extraction from papers, geographic and UNESCO name matching, and BERTopic modelling. It also shares a cross-method binary table that combines extracted terms with topic assignments. See [data/README.md](data/README.md) for the shared data and [src/term_mapping/README.md](src/term_mapping/README.md) for the analysis notebooks.
 
 | Method | Code and configuration | Shared data |
 | --- | --- | --- |
@@ -8,7 +8,7 @@ This repository shares code, configuration, inputs, and selected results for thr
 | Place and UNESCO matching | `src/geography/` | `data/geography/UNESCO_to_Map.xlsx` and the two UNESCO name dictionaries |
 | BERTopic | `src/topic_modeling/` | `data/topic_modeling/meta_data.csv`, `data/topic_modeling/final_probability_distribution.xlsx`, `data/topic_modeling/comparison_report_sorted.csv`, `data/topic_modeling/seed_stability/` |
 
-The cross-method result is `data/term_mapping/Binary_encodings.csv`. Its supporting notebooks and mapping rules are in `term_mapping/` (`mapping_dictionaries.py`).
+The cross-method result is `data/term_mapping/Binary_encodings.csv`. Its supporting notebooks and mapping rules are in `src/term_mapping/` (`mapping_dictionaries.py`).
 
 Article PDFs, extracted full text, API responses, model caches, and generated intermediate files are not distributed. Put papers you may use in `data/pdfs/`. Generated files can be placed under `data/outputs/` or `outputs/`; those directories are ignored by Git.
 
@@ -128,4 +128,4 @@ The dedicated random-seed stability script belongs at `src/topic_modeling/seed_s
 
 ## Cross-method binary encodings
 
-`data/term_mapping/Binary_encodings.csv` is the shared paper-level table of extracted-term indicators and binary topic assignments. The original notebooks in `term_mapping/` show how terms were mapped and combined with BERTopic assignments. They expect intermediate CSV files that are not distributed; [term_mapping/README.md](term_mapping/README.md) identifies the corresponding published workbook sheets and explains the original notebooks' run-time settings. Running the saved notebook cells without those preparations does not directly reconstruct the shared binary table.
+`data/term_mapping/Binary_encodings.csv` is the shared paper-level table of extracted-term indicators and binary topic assignments. The original notebooks in `src/term_mapping/` show how terms were mapped and combined with BERTopic assignments. They expect intermediate CSV files that are not distributed; [src/term_mapping/README.md](src/term_mapping/README.md) identifies the corresponding published workbook sheets and explains the original notebooks' run-time settings. Running the saved notebook cells without those preparations does not directly reconstruct the shared binary table.

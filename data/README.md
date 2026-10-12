@@ -21,4 +21,4 @@ For cross-file joins, `complete_dataset.xlsx` uses `filename` in its `merged` sh
 
 The published corpus contains 464 records, including two records with different titles that refer to the same Hassan, Zerva, and Aulet full-text study. The consistency workbook compares these two records; it is not the separate ten-paper manual accuracy check described in the manuscript.
 
-The binary table combines term indicators derived from the extraction workbooks with topic assignments from BERTopic. See [term_mapping/README.md](../term_mapping/README.md) for the original notebooks, their intermediate CSV inputs, and the settings needed when working toward this result.
+The binary table combines term indicators derived from the extraction workbooks with topic assignments from BERTopic. See [src/term_mapping/README.md](../src/term_mapping/README.md) for the original notebooks, their intermediate CSV inputs, and the settings needed when working toward this result.
