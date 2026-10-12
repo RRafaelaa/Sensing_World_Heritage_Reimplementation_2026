@@ -1,14 +1,14 @@
 # Sensing Cultural Significance: reimplementation materials
 
-This repository shares code, configuration, inputs, and selected results for three methods used in *Sensing Cultural Significance with Social Media and Artificial Intelligence: A Systematic Literature Review*: structured extraction from papers, geographic and UNESCO name matching, and BERTopic modelling. It also shares a cross-method binary table that combines extracted terms with topic assignments. See [data/README.md](data/README.md) for the shared data and [analysis/README.md](analysis/README.md) for the analysis notebooks.
+This repository shares code, configuration, inputs, and selected results for three methods used in *Sensing Cultural Significance with Social Media and Artificial Intelligence: A Systematic Literature Review*: structured extraction from papers, geographic and UNESCO name matching, and BERTopic modelling. It also shares a cross-method binary table that combines extracted terms with topic assignments. See [data/README.md](data/README.md) for the shared data and [term_mapping/README.md](term_mapping/README.md) for the analysis notebooks.
 
 | Method | Code and configuration | Shared data |
 | --- | --- | --- |
 | PDF/TXT to structured extraction | `src/extraction/`, `config/extraction/` | `data/extractions/complete_dataset.xlsx`, `data/extractions/Robustness_alignment_Hassan.xlsx` |
 | Place and UNESCO matching | `src/geography/` | `data/geography/UNESCO_to_Map.xlsx` and the two UNESCO name dictionaries |
-| BERTopic | `src/topic_modeling/` | `data/topic_modeling/meta_data.csv`, `data/topic_modeling/final_probability_distribution.xlsx`, `data/topic_modeling/comparison_report_sorted.csv` |
+| BERTopic | `src/topic_modeling/` | `data/topic_modeling/meta_data.csv`, `data/topic_modeling/final_probability_distribution.xlsx`, `data/topic_modeling/comparison_report_sorted.csv`, `data/topic_modeling/seed_stability/` |
 
-The cross-method result is `data/term_mapping/Binary_encodings.csv`. Its supporting notebooks are in `analysis/`, with their mapping rules in `src/mapping_dictionaries.py`.
+The cross-method result is `data/term_mapping/Binary_encodings.csv`. Its supporting notebooks are in `term_mapping/`, with their mapping rules in `src/mapping_dictionaries.py`.
 
 Article PDFs, extracted full text, API responses, model caches, and generated intermediate files are not distributed. Put papers you may use in `data/pdfs/`. Generated files can be placed under `data/outputs/` or `outputs/`; those directories are ignored by Git.
 
@@ -32,7 +32,11 @@ Run the commands below from the repository root. `extract_pdf_text.py` reads `da
 python src/extraction/extract_pdf_text.py
 ```
 
-Set `GOOGLE_API_KEY` in your environment. The full and targeted instruction/schema files are predefined extraction rules; they are inputs to the Gemini requests, not outputs generated from each paper. Run the baseline pass and then the targeted pass:
+Set `GOOGLE_API_KEY` in your environment. The full and targeted instruction/schema files are predefined extraction rules; they are inputs to the Gemini requests, not outputs generated from each paper.
+
+For each paper, `src/extraction/heritage_extractor_gemini.py` assembles the prompt sent to Gemini by combining the extracted paper text, its filename, the selected schema and instructions, and a fixed request template in the script.
+
+Run the baseline pass and then the targeted pass:
 
 ```bash
 python src/extraction/heritage_extractor_gemini.py \
@@ -118,8 +122,10 @@ The model uses `all-MiniLM-L6-v2` embeddings by default. To explore the reported
 python src/topic_modeling/visualize_experiment.py --experiment_id EXPERIMENT_ID
 ```
 
-That visualization script writes `probability_distribution.xlsx` under `outputs/figures_improved_v3/EXPERIMENT_ID/`. The shared `final_probability_distribution.xlsx` is the selected historical result. The shared `comparison_report_sorted.csv` ranks the 192 parameter configurations from the historical comparison run; it is not the result of the separate ten-random-seed stability check. Exact values may differ in a new run because model versions, embeddings, and stochastic steps can differ.
+That visualization script writes `probability_distribution.xlsx` under `outputs/figures_improved_v3/EXPERIMENT_ID/`. The shared `final_probability_distribution.xlsx` is the selected historical result. The shared `comparison_report_sorted.csv` ranks the 192 parameter configurations from the historical comparison run.
+
+The dedicated random-seed stability script belongs at `src/topic_modeling/seed_stability.py`. Its results are in `data/topic_modeling/seed_stability/`; see the [data guide](data/topic_modeling/seed_stability/README.md) for the experimental settings and recorded environment. They compare the selected configuration at reference UMAP seed 42 with ten additional seeds (0–9). The files provide per-seed metrics, document topic assignments, topic matches against the reference, and a summary by reference topic. Exact values may differ in a new run because model versions, embeddings, and stochastic steps can differ.
 
 ## Cross-method binary encodings
 
-`data/term_mapping/Binary_encodings.csv` is the shared paper-level table of extracted-term indicators and binary topic assignments. The original notebooks in `analysis/` show how terms were mapped and combined with BERTopic assignments. They expect intermediate CSV files that are not distributed; [analysis/README.md](analysis/README.md) identifies the corresponding published workbook sheets and explains the original notebooks' run-time settings. Running the saved notebook cells without those preparations does not directly reconstruct the shared binary table.
+`data/term_mapping/Binary_encodings.csv` is the shared paper-level table of extracted-term indicators and binary topic assignments. The original notebooks in `term_mapping/` show how terms were mapped and combined with BERTopic assignments. They expect intermediate CSV files that are not distributed; [term_mapping/README.md](term_mapping/README.md) identifies the corresponding published workbook sheets and explains the original notebooks' run-time settings. Running the saved notebook cells without those preparations does not directly reconstruct the shared binary table.
