@@ -8,7 +8,7 @@ This repository shares code, configuration, inputs, and selected results for thr
 | Place and UNESCO matching | `src/geography/` | `data/geography/UNESCO_to_Map.xlsx` and the two UNESCO name dictionaries |
 | BERTopic | `src/topic_modeling/` | `data/topic_modeling/meta_data.csv`, `data/topic_modeling/final_probability_distribution.xlsx`, `data/topic_modeling/comparison_report_sorted.csv`, `data/topic_modeling/seed_stability/` |
 
-The cross-method result is `data/term_mapping/Binary_encodings.csv`. Its supporting notebooks are in `term_mapping/`, with their mapping rules in `src/mapping_dictionaries.py`.
+The cross-method result is `data/term_mapping/Binary_encodings.csv`. Its supporting notebooks and mapping rules are in `term_mapping/` (`mapping_dictionaries.py`).
 
 Article PDFs, extracted full text, API responses, model caches, and generated intermediate files are not distributed. Put papers you may use in `data/pdfs/`. Generated files can be placed under `data/outputs/` or `outputs/`; those directories are ignored by Git.
 
